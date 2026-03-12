@@ -630,3 +630,115 @@ input:focus, select:focus {
 .notification-alert.desktop-alert.show {
     bottom: 40px;
 }
+
+/* -------------------------------------
+   Mobile Responsiveness
+--------------------------------------*/
+@media (max-width: 850px) {
+    /* Main Layout */
+    .dashboard-layout {
+        flex-direction: column;
+    }
+
+    /* Top Header & Mobile Menu Button */
+    .mobile-menu-btn {
+        display: block !important;
+    }
+    
+    .top-header {
+        padding: 15px 20px;
+        position: sticky;
+        top: 0;
+        z-index: 15;
+    }
+    
+    .header-actions {
+        gap: 10px;
+    }
+    
+    #page-title {
+        font-size: 1.4rem;
+    }
+
+    /* Sidebar - hidden by default, slide from right */
+    .sidebar {
+        position: fixed;
+        right: -300px; /* Hide off-screen */
+        top: 0;
+        height: 100vh;
+        width: 280px;
+        box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+        transition: right 0.3s ease-in-out;
+        z-index: 999;
+    }
+    
+    .sidebar.active {
+        right: 0; /* Slide in */
+    }
+
+    .main-content {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* Stack chart and next med */
+    }
+    
+    .map-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Contact View Grid */
+    #contact-view > div {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Modals */
+    .modal-content {
+        width: 95%;
+        margin: 20px;
+        padding: 20px;
+    }
+
+    /* Alert Banner */
+    .med-alert-banner {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    .med-alert-banner .alert-actions {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Sidebar overlay for clicking outside to close */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 998;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr; /* Stack all stats on very small screens */
+    }
+}

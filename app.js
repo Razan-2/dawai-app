@@ -151,12 +151,20 @@ function setupTabs() {
         tab.addEventListener('click', () => {
             // Remove active classes
             tabs.forEach(t => t.classList.remove('active'));
-            views.forEach(v => v.classList.remove('active-view'));
+            views.forEach(v => v.classList.remove('active'));
 
             // Add active classes to selected
             tab.classList.add('active');
             const targetId = tab.getAttribute('data-target');
-            document.getElementById(targetId).classList.add('active-view');
+            const targetView = document.getElementById(targetId);
+            if(targetView) {
+                targetView.classList.add('active');
+            }
+            
+            // Close the sidebar if on mobile view
+            if(window.innerWidth <= 850) {
+                toggleSidebar();
+            }
 
             // Update Top Header Title
             const pageTitleEl = document.getElementById('page-title');
@@ -843,5 +851,16 @@ function toggleTheme(themeVal) {
     } else {
         document.body.classList.remove('dark-theme');
         localStorage.setItem('theme', 'light');
+    }
+}
+
+// Mobile Sidebar Toggle
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    
+    if (sidebar && overlay) {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
     }
 }

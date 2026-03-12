@@ -45,8 +45,12 @@
     </div>
 
     <div class="dashboard-layout">
+        
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
         <!-- Sidebar Navigation -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="logo">
                 <i class="fa-solid fa-notes-medical"></i>
                 <h1>دوائي</h1>
@@ -89,7 +93,10 @@
         <!-- Main Content Area -->
         <main class="main-content">
             <header class="top-header">
-                <h2 id="page-title">أدوية اليوم</h2>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button class="icon-btn mobile-menu-btn" onclick="toggleSidebar()" title="القائمة" style="display: none;"><i class="fa-solid fa-bars"></i></button>
+                    <h2 id="page-title">أدوية اليوم</h2>
+                </div>
                 <div class="header-actions">
                     <button class="icon-btn" id="theme-toggle" onclick="toggleThemeButton()" title="تغيير المظهر"><i class="fa-solid fa-moon"></i></button>
                     <button class="icon-btn" onclick="openModal('notifications-modal')" title="الإشعارات"><i class="fa-solid fa-bell"></i></button>
