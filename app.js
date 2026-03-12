@@ -151,14 +151,14 @@ function setupTabs() {
         tab.addEventListener('click', () => {
             // Remove active classes
             tabs.forEach(t => t.classList.remove('active'));
-            views.forEach(v => v.classList.remove('active'));
+            views.forEach(v => v.classList.remove('active-view'));
 
             // Add active classes to selected
             tab.classList.add('active');
             const targetId = tab.getAttribute('data-target');
             const targetView = document.getElementById(targetId);
             if(targetView) {
-                targetView.classList.add('active');
+                targetView.classList.add('active-view');
             }
             
             // Close the sidebar if on mobile view
