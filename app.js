@@ -137,9 +137,9 @@ async function fetchMedications() {
             id: med.id,
             name: med.medicine_name,
             dose: med.dosage,
-            type: 'pill', // افتراضي
+            type: med.type || 'pill', 
             time: med.time,
-            instruction: 'بدون تحديد', // افتراضي
+            instruction: med.instruction || 'بدون تحديد', 
             taken: false
         }));
     }
@@ -432,7 +432,7 @@ addForm.addEventListener('submit', async (e) => {
     const { data, error } = await supabaseClient
         .from('medicines')
         .insert([
-            { medicine_name: name, dosage: dose, time: time, user_id: currentUser.id }
+            { medicine_name: name, dosage: dose, time: time, type: type, instruction: instruction, user_id: currentUser.id }
         ])
         .select();
 

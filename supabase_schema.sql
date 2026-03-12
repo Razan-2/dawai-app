@@ -13,6 +13,8 @@ CREATE TABLE medicines (
   medicine_name TEXT NOT NULL,
   dosage TEXT NOT NULL,
   time TIME NOT NULL,
+  type TEXT DEFAULT 'pill',
+  instruction TEXT DEFAULT 'بدون تحديد',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
