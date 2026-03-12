@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حساب جديد - دوائي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .auth-card {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .auth-card .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+        .auth-card h2 { margin-bottom: 20px; }
+        .auth-card .form-group { text-align: right; margin-bottom: 15px; }
+        .auth-card .btn-primary { width: 100%; margin-top: 15px; font-size: 1rem; }
+        .auth-links { margin-top: 20px; }
+        .auth-links a { color: var(--primary-color); text-decoration: none; font-weight: bold; }
+        .auth-links a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body style="background-color: var(--bg-color);">
+    <div class="auth-container">
+        <div class="glass-card auth-card">
+            <div class="logo">
+                <i class="fa-solid fa-notes-medical fa-3x"></i>
+                <h1 style="margin-right: 15px;">دوائي</h1>
+            </div>
+            <h2>إنشاء حساب جديد</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label>الاسم الكامل</label>
+                    <input type="text" id="name" required placeholder="أدخل اسمك" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo', sans-serif;">
+                </div>
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="email" required placeholder="أدخل بريدك الإلكتروني" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo', sans-serif;">
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور</label>
+                    <input type="password" id="password" required minlength="6" placeholder="6 أحرف على الأقل" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo', sans-serif;">
+                </div>
+                <div id="error-msg" style="color: #ff6b6b; margin-top: 10px; font-size: 0.9rem; display: none;"></div>
+                <button type="submit" class="btn-primary" id="register-btn">
+                    <i class="fa-solid fa-user-plus"></i> تسجيل حساب
+                </button>
+            </form>
+            <div class="auth-links">
+                <p>لديك حساب بالفعل؟ <a href="login.html">سجل الدخول هنا</a></p>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+</body>
+</html>
