@@ -162,7 +162,7 @@ function setupTabs() {
             }
             
             // Close the sidebar if on mobile view
-            if(window.innerWidth <= 850) {
+            if(window.innerWidth <= 768) {
                 toggleSidebar();
             }
 

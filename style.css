@@ -634,7 +634,7 @@ input:focus, select:focus {
 /* -------------------------------------
    Mobile Responsiveness
 --------------------------------------*/
-@media (max-width: 850px) {
+@media (max-width: 768px) {
     /* Main Layout */
     .dashboard-layout {
         flex-direction: column;
@@ -663,17 +663,36 @@ input:focus, select:focus {
     /* Sidebar - hidden by default, slide from right */
     .sidebar {
         position: fixed;
-        right: -300px; /* Hide off-screen */
+        right: -320px; /* Hide off-screen completely */
         top: 0;
         height: 100vh;
-        width: 280px;
+        width: 260px;
+        max-width: 85vw; /* Prevent from breaking on very very small phones */
+        background: var(--bg-surface);
         box-shadow: -5px 0 25px rgba(0,0,0,0.1);
         transition: right 0.3s ease-in-out;
         z-index: 999;
+        overflow-y: auto; /* Handle small heights */
     }
     
     .sidebar.active {
         right: 0; /* Slide in */
+    }
+    
+    /* Prevent text wrapping breaking the layout */
+    .user-info {
+        min-width: 0; 
+        overflow: hidden;
+    }
+    .user-info h3, .user-info p {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .tab-btn {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .main-content {
