@@ -1,0 +1,277 @@
+/**
+ * Dawaee Web App - Core Logic
+ */
+
+// Supabase Configuration
+// يرجى استبدال مفتاحك برابط ومفتاح مشروعك في Supabase
+const supabaseUrl = 'https://krvvdvebxhhhqdzevgdu.supabase.co';
+const supabaseKey = 'sb_publishable_we8u-bBYQKo5NIlIMtfZPA_fhG3LUz0';
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// Initial Data
+let medications = [];
+
+// Elements
+const tabs = document.querySelectorAll('.tab-btn');
+const views = document.querySelectorAll('.view');
+const medListEl = document.getElementById('medications-list');
+const addForm = document.getElementById('add-med-form');
+
+// Initialize
+document.addEventListener('DOMContentLoaded', async () => {
+    await fetchMedications();
+    renderMedications();
+    setupTabs();
+    
+    // Check for notifications simulation (after 3 seconds)
+    setTimeout(() => {
+        showNotification('وقت الدواء!', 'حان موعد أخذ جرعة أوميبرازول 20mg');
+    }, 3000);
+});
+
+// Fetch medications from Supabase
+async function fetchMedications() {
+    const { data, error } = await supabaseClient
+        .from('medicines')
+        .select('*');
+        
+    if (error) {
+        console.error('Error fetching medications:', error);
+        return;
+    }
+    
+    if (data) {
+        // تحويل البيانات لكي تتناسب مع طريقة العرض
+        medications = data.map(med => ({
+            id: med.id,
+            name: med.medicine_name,
+            dose: med.dosage,
+            type: 'pill', // افتراضي
+            time: med.time,
+            instruction: 'بدون تحديد', // افتراضي
+            taken: false
+        }));
+    }
+}
+
+// Tab Navigation
+function setupTabs() {
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active classes
+            tabs.forEach(t => t.classList.remove('active'));
+            views.forEach(v => v.classList.remove('active-view'));
+            
+            // Add active classes to selected
+            tab.classList.add('active');
+            const targetId = tab.getAttribute('data-target');
+            document.getElementById(targetId).classList.add('active-view');
+            
+            // Update Top Header Title
+            const pageTitleEl = document.getElementById('page-title');
+            if (pageTitleEl) {
+                // Get the text content of the tab, excluding the icon
+                pageTitleEl.innerText = tab.innerText.trim();
+            }
+        });
+    });
+}
+
+// Render Medications List
+function renderMedications() {
+    medListEl.innerHTML = '';
+    
+    if (medications.length === 0) {
+        medListEl.innerHTML = `
+            <div style="text-align:center; padding: 40px 20px; color: var(--text-muted)">
+                <i class="fa-solid fa-notes-medical fa-3x" style="color:#ddd; margin-bottom: 15px;"></i>
+                <p>لا توجد أدوية مضافة لليوم.</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Sort by time
+    const sortedMeds = [...medications].sort((a, b) => a.time.localeCompare(b.time));
+
+    sortedMeds.forEach(med => {
+        const iconType = med.type === 'syrup' ? 'fa-bottle-droplet' : 
+                         med.type === 'injection' ? 'fa-syringe' : 'fa-pills';
+        
+        const card = document.createElement('div');
+        card.className = 'medication-card';
+        card.innerHTML = `
+            <div class="med-icon">
+                <i class="fa-solid ${iconType}"></i>
+            </div>
+            <div class="med-info" style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+                <div>
+                    <h3>${med.name} <span style="font-size:0.8rem; font-weight:normal; color:#666">(${med.dose})</span></h3>
+                    <div class="med-details">
+                        <span><i class="fa-solid fa-circle-info" style="font-size:0.7rem;"></i> ${med.instruction}</span>
+                    </div>
+                </div>
+                <button onclick="deleteMedication(${med.id})" style="background: none; border: none; color: #ff6b6b; font-size: 1.2rem; cursor: pointer; margin-left: 10px;" title="حذف الدواء">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+            <div class="med-time">${med.time}</div>
+            <div style="margin-right: 15px; display: flex; align-items: center; gap: 10px;">
+                <button class="take-btn ${med.taken ? 'taken' : ''}" onclick="toggleTaken(${med.id})" title="تم أخذه">
+                    <i class="fa-solid ${med.taken ? 'fa-check' : 'fa-check'}"></i>
+                </button>
+            </div>
+        `;
+        medListEl.appendChild(card);
+    });
+}
+
+// Delete Medication
+async function deleteMedication(id) {
+    if (!confirm('هل أنت متأكد من حذف هذا الدواء؟')) return;
+    
+    // Delete associated reminders first to avoid foreign key errors
+    await supabaseClient.from('reminders').delete().eq('medicine_id', id);
+    
+    // Delete the medicine
+    const { error } = await supabaseClient
+        .from('medicines')
+        .delete()
+        .eq('id', id);
+        
+    if (error) {
+        console.error('Error deleting medication:', error);
+        showNotification('خطأ', 'حدث خطأ أثناء الحذف');
+        return;
+    }
+    
+    await fetchMedications();
+    renderMedications();
+    showNotification('تم الحذف', 'تم حذف الدواء بنجاح');
+}
+
+// Mark Medication as Taken
+function toggleTaken(id) {
+    const med = medications.find(m => m.id === id);
+    if (med) {
+        med.taken = !med.taken;
+        if (medListEl) {
+            // Calculate adherence percentage for desktop UI
+            const total = medications.length;
+            const takenMeds = medications.filter(m => m.taken).length;
+            const adherenceSpan = document.querySelector('.stats-badge span');
+            if(adherenceSpan) {
+                adherenceSpan.innerText = total > 0 ? `${Math.round((takenMeds / total) * 100)}%` : '0%';
+            }
+        }
+        
+        renderMedications();
+        
+        if (med.taken) {
+            // Little feedback
+            const btn = document.querySelector(`.take-btn.taken`);
+            if(btn) {
+                btn.style.transform = 'scale(1.1)';
+                setTimeout(() => btn.style.transform = 'scale(1)', 200);
+            }
+        }
+    }
+}
+
+// Add Medication Form Submit
+addForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const name = document.getElementById('med-name').value;
+    const dose = document.getElementById('med-dose').value;
+    const type = document.getElementById('med-type').value;
+    const time = document.getElementById('med-time').value;
+    const instruction = document.querySelector('input[name="instruction"]:checked').value;
+    
+    // إضافة الدواء إلى قاعدة بيانات Supabase
+    const { data, error } = await supabaseClient
+        .from('medicines')
+        .insert([
+            { medicine_name: name, dosage: dose, time: time }
+        ])
+        .select();
+        
+    if (error) {
+        console.error('Error inserting medication:', error);
+        showNotification('خطأ', 'حدث خطأ أثناء حفظ الدواء');
+        return;
+    }
+    
+    if (data && data.length > 0) {
+        const medId = data[0].id;
+        
+        // إضافة تذكير للدواء الجديد في جدول التذكيرات
+        await supabaseClient
+            .from('reminders')
+            .insert([
+                { medicine_id: medId, reminder_time: time }
+            ]);
+            
+        // تحديث القائمة بعد الإضافة
+        await fetchMedications();
+        renderMedications();
+        
+        // Switch to home tab
+        document.querySelector('.tab-btn[data-target="home-view"]').click();
+        
+        // Reset form
+        addForm.reset();
+        
+        // Show success notification
+        showNotification('تمت الإضافة', `تم إضافة ${name} بنجاح إلى قاعدة البيانات`);
+    }
+});
+
+// Drug Interaction Checker Simulator
+function checkInteraction() {
+    const d1 = document.getElementById('drug1').value.trim();
+    const d2 = document.getElementById('drug2').value.trim();
+    const resultBox = document.getElementById('interaction-result');
+    
+    if (!d1 || !d2) return;
+    
+    // Basic Simulation logic
+    resultBox.classList.remove('hidden', 'result-safe', 'result-warning', 'result-danger');
+    
+    // Simulate loading
+    resultBox.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الفحص...';
+    resultBox.className = 'result-box';
+    
+    setTimeout(() => {
+        const combo = (d1 + d2).toLowerCase();
+        
+        if (combo.includes('بنادول') && combo.includes('بروفين')) {
+            resultBox.classList.add('result-warning');
+            resultBox.innerHTML = '<strong><i class="fa-solid fa-triangle-exclamation"></i> تعارض متوسط:</strong> كلاهما مسكنات ألم، قد يزيدان من خطر التهاب المعدة. يفضل المباعدة بينهما.';
+        } else if (combo.includes('اسبرين') && combo.includes('وارفارين')) {
+            resultBox.classList.add('result-danger');
+            resultBox.innerHTML = '<strong><i class="fa-solid fa-ban"></i> تعارض خطير:</strong> خطر النزيف عالي جداً! لا يجب الجمع بينهما إلا بإشراف طبي دقيق.';
+        } else {
+            resultBox.classList.add('result-safe');
+            resultBox.innerHTML = '<strong><i class="fa-solid fa-check-circle"></i> آمن:</strong> لا توجد تفاعلات دوائية معروفة بين هذين الدواءين بناءً على قاعدة البيانات.';
+        }
+    }, 1000);
+}
+
+// Notification System
+function showNotification(title, message) {
+    const alert = document.getElementById('notification-alert');
+    document.getElementById('alert-title').innerText = title;
+    document.getElementById('alert-msg').innerText = message;
+    
+    alert.classList.add('show');
+    
+    // Auto hide after 5 seconds
+    setTimeout(() => {
+        closeNotification();
+    }, 5000);
+}
+
+function closeNotification() {
+    document.getElementById('notification-alert').classList.remove('show');
+}

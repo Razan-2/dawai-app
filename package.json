@@ -1,0 +1,34 @@
+{
+  "name": "razan",
+  "version": "1.0.0",
+  "description": "تطبيق ويب متكامل يهدف إلى مساعدة المرضى وكبار السن في تنظيم ومتابعة مواعيد أدويتهم، وتقليل التعارض الدوائي، وتسهيل العثور على الصيدليات القريبة من خلال تفاعل حي مع خريطة جغرافية واضحة وبسيطة.",
+  "main": "app.js",
+  "scripts": {
+    "build": "node build.js",
+    "cap:sync": "node build.js && npx cap sync",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Razan-2/---.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Razan-2/---/issues"
+  },
+  "homepage": "https://github.com/Razan-2/---#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.2.0",
+    "@capacitor/cli": "^8.2.0",
+    "@capacitor/core": "^8.2.0",
+    "@capacitor/ios": "^8.2.0",
+    "@capacitor/push-notifications": "^8.0.2",
+    "@capacitor/splash-screen": "^8.0.1"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5"
+  }
+}

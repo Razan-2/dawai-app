@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Dawaee</string>
+    <string name="title_activity_main">Dawaee</string>
+    <string name="package_name">com.razan.dawaee</string>
+    <string name="custom_url_scheme">com.razan.dawaee</string>
+</resources>
