@@ -11,7 +11,10 @@ if (!fs.existsSync(wwwDir)){
 // List of files/folders to copy
 const filesToCopy = [
     'index.html',
+    'login.html',
+    'register.html',
     'app.js',
+    'auth.js',
     'style.css',
     'manifest.json',
     'icon-192x192.png',

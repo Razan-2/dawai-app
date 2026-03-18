@@ -20,10 +20,17 @@ const addForm = document.getElementById('add-med-form');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
+    // Listen for auth state changes continuously
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_OUT') {
+            window.location.replace('login.html');
+        }
+    });
+
     // Check Auth Session
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) {
-        window.location.href = 'login.html';
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
+    if (!session || error) {
+        window.location.replace('login.html');
         return;
     }
     currentUser = session.user;
@@ -604,7 +611,7 @@ function triggerBrowserNotification(title, body) {
 
 async function logout() {
     await supabaseClient.auth.signOut();
-    window.location.href = 'login.html';
+    window.location.replace('login.html');
 }
 
 let myMap;
