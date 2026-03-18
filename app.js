@@ -187,6 +187,40 @@ function setupTabs() {
     });
 }
 
+// Medication Image Mapper
+function getMedicationImage(name, type) {
+    if (!name) name = '';
+    const nm = name.toLowerCase();
+    
+    if (nm.includes('سكر') || nm.includes('انسولين') || nm.includes('diabet') || nm.includes('insulin') || nm.includes('جلوكوفاج')) {
+        return 'https://cdn-icons-png.flaticon.com/512/3039/3039369.png'; 
+    }
+    if (nm.includes('ضغط') || nm.includes('املوديبين') || nm.includes('كونكور') || nm.includes('blood pressure')) {
+        return 'https://cdn-icons-png.flaticon.com/512/8660/8660462.png'; 
+    }
+    if (nm.includes('كوليسترول') || nm.includes('دهون') || nm.includes('ليبيتور') || nm.includes('cholesterol')) {
+        return 'https://cdn-icons-png.flaticon.com/512/6283/6283282.png'; 
+    }
+    if (nm.includes('مسكن') || nm.includes('صداع') || nm.includes('الم') || nm.includes('بنادول') || nm.includes('بروفين') || nm.includes('فيفادول')) {
+        return 'https://cdn-icons-png.flaticon.com/512/2966/2966327.png'; 
+    }
+    if (nm.includes('فيتامين') || nm.includes('حديد') || nm.includes('كالسيوم') || nm.includes('مكمل') || nm.includes('vitamin')) {
+        return 'https://cdn-icons-png.flaticon.com/512/3201/3201826.png'; 
+    }
+    if (nm.includes('مضاد') || nm.includes('اموكسيل') || nm.includes('اوجمنتين') || nm.includes('antibiotic')) {
+        return 'https://cdn-icons-png.flaticon.com/512/883/883356.png'; 
+    }
+    if (nm.includes('حساسية') || nm.includes('ربو') || nm.includes('بخاخ') || nm.includes('معده')) {
+        return 'https://cdn-icons-png.flaticon.com/512/3022/3022519.png'; 
+    }
+
+    if (type === 'syrup') return 'https://cdn-icons-png.flaticon.com/512/3022/3022839.png';
+    if (type === 'injection') return 'https://cdn-icons-png.flaticon.com/512/3429/3429408.png';
+    if (type === 'effervescent') return 'https://cdn-icons-png.flaticon.com/512/2865/2865747.png';
+    
+    return 'https://cdn-icons-png.flaticon.com/512/822/822092.png';
+}
+
 // Render Medications List
 function renderMedications() {
     medListEl.innerHTML = '';
@@ -205,31 +239,28 @@ function renderMedications() {
     const sortedMeds = [...medications].sort((a, b) => a.time.localeCompare(b.time));
 
     sortedMeds.forEach(med => {
-        let imgSrc = 'https://cdn-icons-png.flaticon.com/512/822/822092.png'; // pill (حبوب)
-        if (med.type === 'syrup') imgSrc = 'https://cdn-icons-png.flaticon.com/512/3022/3022839.png'; // شراب
-        else if (med.type === 'injection') imgSrc = 'https://cdn-icons-png.flaticon.com/512/3429/3429408.png'; // حقنة
-        else if (med.type === 'effervescent') imgSrc = 'https://cdn-icons-png.flaticon.com/512/2865/2865747.png'; // فوار
+        let imgSrc = getMedicationImage(med.name, med.type);
 
         const card = document.createElement('div');
         card.className = 'medication-card';
         card.innerHTML = `
             <div class="med-icon">
-                <img src="${imgSrc}" alt="${med.type}" style="width: 75%; height: 75%; object-fit: contain;">
+                <img src="${imgSrc}" alt="${med.name}">
             </div>
-            <div class="med-info" style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
-                <div>
-                    <h3>${med.name} <span style="font-size:0.8rem; font-weight:normal; color:#666">(${med.dose})</span></h3>
-                    <div class="med-details">
-                        <span><i class="fa-solid fa-circle-info" style="font-size:0.7rem;"></i> ${med.instruction}</span>
+            <div class="med-info" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="flex:1;">
+                    <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 8px;">${med.name} <span style="font-size:1.1rem; font-weight:normal; color:#666">(${med.dose})</span></h3>
+                    <div class="med-details" style="font-size: 1.1rem;">
+                        <span><i class="fa-solid fa-circle-info" style="color:var(--primary-color);"></i> ${med.instruction}</span>
                     </div>
                 </div>
-                <button onclick="deleteMedication('${med.id}')" style="background: none; border: none; color: #ff6b6b; font-size: 1.2rem; cursor: pointer; margin-left: 10px;" title="حذف الدواء">
+                <button onclick="deleteMedication('${med.id}')" style="background: none; border: none; color: #ff6b6b; font-size: 1.4rem; cursor: pointer; padding: 10px;" title="حذف الدواء">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
-            <div class="med-time">${med.time}</div>
-            <div style="margin-right: 15px; display: flex; align-items: center; gap: 10px;">
-                <button class="take-btn ${med.taken ? 'taken' : ''}" onclick="toggleTaken('${med.id}')" title="تم أخذه">
+            <div class="med-time" style="font-size: 1.3rem; margin: 0 15px;">${med.time}</div>
+            <div style="display: flex; align-items: center;">
+                <button class="take-btn ${med.taken ? 'taken' : ''}" style="width: 55px; height: 55px; font-size: 1.8rem;" onclick="toggleTaken('${med.id}')" title="تم أخذه">
                     <i class="fa-solid ${med.taken ? 'fa-check' : 'fa-check'}"></i>
                 </button>
             </div>

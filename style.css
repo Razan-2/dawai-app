@@ -362,22 +362,23 @@ h1, h2, h3, h4 { color: var(--primary-dark); }
 }
 
 .med-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 16px;
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
     background: var(--secondary-color);
     color: var(--primary-color);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.8rem;
+    font-size: 2rem;
     margin-left: 20px;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .med-icon img {
-    width: 70%;
-    height: 70%;
+    width: 80%;
+    height: 80%;
     object-fit: contain;
     transition: var(--transition);
 }
