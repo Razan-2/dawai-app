@@ -752,13 +752,18 @@ function initMap() {
     }
 }
 
-// قائمة افتراضية للصيدليات (بإحداثيات مبدئية سيتم حساب المسافة منها)
+// قائمة الصيدليات (بإحداثيات الرياض وأبها)
 const pharmaciesDB = [
+    // الرياض
     { name: 'صيدلية النهدي', lat: 24.7236, lng: 46.6853, status: 'مفتوح', statusClass: 'success', stockMsg: 'الدواء متوفر', stockClass: 'text-success', stockIcon: 'fa-box-open' },
-    { name: 'صيدلية الدواء', lat: 24.7000, lng: 46.6600, status: 'مفتوح', statusClass: 'success', stockMsg: 'الدواء متوفر', stockClass: 'text-success', stockIcon: 'fa-box-open' },
+    { name: 'صيدلية الدواء', lat: 24.7000, lng: 46.6600, status: 'مفتوح', statusClass: 'success', stockMsg: 'متوفر', stockClass: 'text-success', stockIcon: 'fa-box-open' },
     { name: 'صيدلية المجتمع', lat: 24.7400, lng: 46.6900, status: 'مغلق قريباً', statusClass: 'warning', stockMsg: 'آخر قطعتين', stockClass: 'text-danger', stockIcon: 'fa-triangle-exclamation' },
-    { name: 'صيدلية وايتس', lat: 24.6900, lng: 46.7000, status: 'مفتوح', statusClass: 'success', stockMsg: 'متوفر بكميات', stockClass: 'text-success', stockIcon: 'fa-box-open' },
-    { name: 'صيدلية أورانج', lat: 24.7500, lng: 46.6500, status: 'مغلق', statusClass: 'danger', stockMsg: 'غير متوفر', stockClass: 'text-danger', stockIcon: 'fa-xmark' }
+    
+    // أبها
+    { name: 'صيدلية النهدي (أبها، المنسك)', lat: 18.2164, lng: 42.5053, status: 'مفتوح', statusClass: 'success', stockMsg: 'الدواء متوفر', stockClass: 'text-success', stockIcon: 'fa-box-open' },
+    { name: 'صيدلية الدواء (أبها، الحزام الدائري)', lat: 18.2250, lng: 42.5150, status: 'مفتوح', statusClass: 'success', stockMsg: 'متوفر بكميات', stockClass: 'text-success', stockIcon: 'fa-box-open' },
+    { name: 'صيدلية غاية (أبها، أبها الجديدة)', lat: 18.2100, lng: 42.4900, status: 'مغلق', statusClass: 'danger', stockMsg: 'غير متوفر', stockClass: 'text-danger', stockIcon: 'fa-xmark' },
+    { name: 'صيدلية المتحدة (عسير)', lat: 18.2320, lng: 42.5000, status: 'مفتوح', statusClass: 'success', stockMsg: 'الدواء متوفر', stockClass: 'text-success', stockIcon: 'fa-box-open' }
 ];
 
 // دالة حساب المسافة بين نقطتين (Haversine formula)
