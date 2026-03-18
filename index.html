@@ -1,3 +1,4 @@
+<!-- Dawaee Web App (UI accessibility updated) -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
@@ -275,8 +276,9 @@
                             <h3 style="margin-bottom: 10px; color: var(--primary-dark);">قائمة الصيدليات القريبة</h3>
                             
                             <!-- Search Box -->
-                            <div class="form-group" style="margin-bottom: 20px;">
-                                <input type="text" id="pharmacy-search" placeholder="ابحث باسم الصيدلية أو الدواء..." style="width: 100%; border-radius: 20px; padding: 12px 20px; font-size: 0.95rem; border: 1px solid var(--primary-light); background: var(--bg-surface);">
+                            <div class="form-group" style="margin-bottom: 20px; display: flex; gap: 8px;">
+                                <input type="text" id="pharmacy-search" placeholder="ابحث باسم الصيدلية أو الدواء..." style="flex: 1; border-radius: 20px; padding: 12px 20px; font-size: 0.95rem; border: 1px solid var(--primary-light); background: var(--bg-surface);">
+                                <button onclick="locateUserAndMap()" class="btn-primary" style="padding: 12px 20px; border-radius: 20px; width: auto; font-size: 0.95rem; white-space: nowrap;"><i class="fa-solid fa-location-crosshairs"></i> موقعي</button>
                             </div>
 
                             <div class="pharmacy-list vertical-list" id="pharmacies-list-container">

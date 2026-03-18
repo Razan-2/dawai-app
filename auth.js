@@ -1,3 +1,4 @@
+// Auth Logic (Updated with robust onAuthStateChange)
 const supabaseUrl = 'https://krvvdvebxhhhqdzevgdu.supabase.co';
 const supabaseKey = 'sb_publishable_we8u-bBYQKo5NIlIMtfZPA_fhG3LUz0';
 const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);

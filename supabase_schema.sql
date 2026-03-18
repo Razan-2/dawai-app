@@ -1,3 +1,4 @@
+-- السكربت النهائي (يتضمن عمود image_url للأدوية)
 -- 1. جدول المستخدمين (Users)
 CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

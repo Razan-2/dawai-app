@@ -1,4 +1,5 @@
 /**
+ * Dawaee Web App - Core Logic (Updated with Real Images & Auth Fixes)
  * Dawaee Web App - Core Logic
  */
 
@@ -662,6 +663,58 @@ let myMap;
 let currentUserLat = 24.7136;
 let currentUserLng = 46.6753;
 let currentMapMarkers = [];
+let userMarker = null;
+
+async function locateUserAndMap() {
+    try {
+        const btn = document.querySelector('button[onclick="locateUserAndMap()"]');
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> تحديث...';
+
+        let coords = null;
+        if (window.Capacitor && window.Capacitor.isNativePlatform() && window.Capacitor.Plugins.Geolocation) {
+            const permission = await window.Capacitor.Plugins.Geolocation.requestPermissions();
+            if (permission.location !== 'granted') {
+                showNotification('عذراً', 'الرجاء السماح بصلاحية الموقع');
+                if (btn) btn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> موقعي';
+                return;
+            }
+            const position = await window.Capacitor.Plugins.Geolocation.getCurrentPosition();
+            coords = { lat: position.coords.latitude, lng: position.coords.longitude };
+        } else {
+            coords = await new Promise((resolve, reject) => {
+                if(!navigator.geolocation) return reject('No Geo API');
+                navigator.geolocation.getCurrentPosition(
+                    pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+                    err => reject(err)
+                );
+            });
+        }
+
+        applyUserLocation(coords.lat, coords.lng);
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> موقعي';
+    } catch (e) {
+        console.error('Geo Error:', e);
+        showNotification('تنبيه', 'تعذر جلب موقعك، تأكد من تشغيل الـ GPS.');
+        const btn = document.querySelector('button[onclick="locateUserAndMap()"]');
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> موقعي';
+    }
+}
+
+function applyUserLocation(lat, lng) {
+    currentUserLat = lat;
+    currentUserLng = lng;
+    if (myMap) {
+        myMap.setView([lat, lng], 14);
+        if (userMarker) {
+            userMarker.setLatLng([lat, lng]);
+        } else {
+            userMarker = L.marker([lat, lng]).addTo(myMap).bindPopup('موقعك الحالي').openPopup();
+        }
+    }
+    const searchInput = document.getElementById('pharmacy-search');
+    updatePharmaciesList(lat, lng, searchInput ? searchInput.value : '');
+    showNotification('موقعك', 'تم تحديد موقعك للبحث عن الصيدليات.');
+}
 
 function initMap() {
     myMap = L.map('map').setView([currentUserLat, currentUserLng], 13);
@@ -670,18 +723,19 @@ function initMap() {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(myMap);
 
+    // Initial silent attempt using HTML5
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
             currentUserLat = position.coords.latitude;
             currentUserLng = position.coords.longitude;
-            myMap.setView([currentUserLat, currentUserLng], 13);
-            L.marker([currentUserLat, currentUserLng]).addTo(myMap).bindPopup('موقعك الحالي').openPopup();
+            myMap.setView([currentUserLat, currentUserLng], 14);
+            userMarker = L.marker([currentUserLat, currentUserLng]).addTo(myMap).bindPopup('موقعك الحالي').openPopup();
 
             // تحديث قائمة الصيدليات بناءً على الإحداثيات الجديدة الحقيقية
             updatePharmaciesList(currentUserLat, currentUserLng);
 
         }, (err) => {
-            console.error('Error getting location:', err);
+            console.error('Error getting location silently:', err);
             // Fallback (الرياض - افتراضي)
             updatePharmaciesList(currentUserLat, currentUserLng);
         });
