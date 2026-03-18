@@ -19,7 +19,8 @@ const filesToCopy = [
     'style.css',
     'manifest.json',
     'icon-192x192.png',
-    'icon-512x512.png'
+    'icon-512x512.png',
+    'known_medicines.json'
 ];
 
 filesToCopy.forEach(file => {
