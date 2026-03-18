@@ -40,3 +40,6 @@ CREATE POLICY "Allow anonymous insert algorithms" ON medicines FOR INSERT WITH C
 
 CREATE POLICY "Allow anonymous read algorithms" ON reminders FOR SELECT USING (true);
 CREATE POLICY "Allow anonymous insert algorithms" ON reminders FOR INSERT WITH CHECK (true);
+
+-- إضافة عمود الصورة للأدوية (لتحديث لوحة التحكم)
+ALTER TABLE medicines ADD COLUMN IF NOT EXISTS image_url TEXT;

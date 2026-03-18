@@ -147,6 +147,7 @@ async function fetchMedications() {
             type: med.type || 'pill', 
             time: med.time,
             instruction: med.instruction || 'بدون تحديد', 
+            image_url: med.image_url || null,
             taken: false
         }));
     }
@@ -188,37 +189,48 @@ function setupTabs() {
 }
 
 // Medication Image Mapper
-function getMedicationImage(name, type) {
+function getMedicationImage(name, type, customUrl) {
+    if (customUrl && customUrl.trim() !== '') return customUrl;
+    
     if (!name) name = '';
     const nm = name.toLowerCase();
     
     if (nm.includes('سكر') || nm.includes('انسولين') || nm.includes('diabet') || nm.includes('insulin') || nm.includes('جلوكوفاج')) {
-        return 'https://cdn-icons-png.flaticon.com/512/3039/3039369.png'; 
+        return 'https://cdn.nahdi.sa/media/catalog/product/1/0/101416_1.jpg'; // Glucophage real photo
     }
     if (nm.includes('ضغط') || nm.includes('املوديبين') || nm.includes('كونكور') || nm.includes('blood pressure')) {
-        return 'https://cdn-icons-png.flaticon.com/512/8660/8660462.png'; 
+        return 'https://cdn.nahdi.sa/media/catalog/product/1/0/100085_1.jpg'; // Concor real photo
     }
     if (nm.includes('كوليسترول') || nm.includes('دهون') || nm.includes('ليبيتور') || nm.includes('cholesterol')) {
-        return 'https://cdn-icons-png.flaticon.com/512/6283/6283282.png'; 
+        return 'https://cdn.nahdi.sa/media/catalog/product/1/0/101897_1.jpg'; // Lipitor real photo
     }
-    if (nm.includes('مسكن') || nm.includes('صداع') || nm.includes('الم') || nm.includes('بنادول') || nm.includes('بروفين') || nm.includes('فيفادول')) {
-        return 'https://cdn-icons-png.flaticon.com/512/2966/2966327.png'; 
+    if (nm.includes('مسكن') || nm.includes('صداع') || nm.includes('الم') || nm.includes('بنادول') || nm.includes('panadol') || nm.includes('فيفادول')) {
+        return 'https://cdn.nahdi.sa/media/catalog/product/1/0/102008_1_v1711202422.jpg'; // Panadol real photo
+    }
+    if (nm.includes('بروفين') || nm.includes('brufen')) {
+        return 'https://cdn.nahdi.sa/media/catalog/product/1/0/101700_1.jpg'; // Brufen
+    }
+    if (nm.includes('ادفانس') || nm.includes('advance')) {
+        return 'https://cdn.nahdi.sa/media/catalog/product/1/0/102008_1_v1711202422.jpg'; // Panadol Advance
+    }
+    if (nm.includes('فيتامين د') || nm.includes('vitamin d')) {
+        return 'https://cdn.nahdi.sa/media/catalog/product/1/0/101347_1.jpg'; // Vitamin D
     }
     if (nm.includes('فيتامين') || nm.includes('حديد') || nm.includes('كالسيوم') || nm.includes('مكمل') || nm.includes('vitamin')) {
-        return 'https://cdn-icons-png.flaticon.com/512/3201/3201826.png'; 
+        return 'https://cdn.nahdi.sa/media/catalog/product/1/0/101869_1.jpg'; // Centrum Vitamin
     }
     if (nm.includes('مضاد') || nm.includes('اموكسيل') || nm.includes('اوجمنتين') || nm.includes('antibiotic')) {
-        return 'https://cdn-icons-png.flaticon.com/512/883/883356.png'; 
+        return 'https://cdn.nahdi.sa/media/catalog/product/1/0/101830_2.jpg'; // Augmentin
     }
-    if (nm.includes('حساسية') || nm.includes('ربو') || nm.includes('بخاخ') || nm.includes('معده')) {
-        return 'https://cdn-icons-png.flaticon.com/512/3022/3022519.png'; 
+    if (nm.includes('حساسية') || nm.includes('زيرتك') || nm.includes('allergy')) {
+        return 'https://cdn.nahdi.sa/media/catalog/product/1/0/101183_1.jpg'; // Zyrtec
+    }
+    if (nm.includes('معده') || nm.includes('نيكسيوم') || nm.includes('nexium')) {
+        return 'https://cdn.nahdi.sa/media/catalog/product/1/0/100863_1.jpg'; // Nexium
     }
 
-    if (type === 'syrup') return 'https://cdn-icons-png.flaticon.com/512/3022/3022839.png';
-    if (type === 'injection') return 'https://cdn-icons-png.flaticon.com/512/3429/3429408.png';
-    if (type === 'effervescent') return 'https://cdn-icons-png.flaticon.com/512/2865/2865747.png';
-    
-    return 'https://cdn-icons-png.flaticon.com/512/822/822092.png';
+    // Default Arabic Placeholder
+    return "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23f8fafc' rx='40'/%3E%3Cpath d='M200 100 A50 50 0 0 0 150 150 V300 A20 20 0 0 0 170 320 H230 A20 20 0 0 0 250 300 V150 A50 50 0 0 0 200 100 Z' fill='%23cbd5e1'/%3E%3Ctext x='200' y='360' font-family='Arial, sans-serif' font-size='24' fill='%2364748b' text-anchor='middle' font-weight='bold' direction='rtl'%3Eصورة غير متوفرة%3C/text%3E%3C/svg%3E";
 }
 
 // Render Medications List
@@ -239,7 +251,7 @@ function renderMedications() {
     const sortedMeds = [...medications].sort((a, b) => a.time.localeCompare(b.time));
 
     sortedMeds.forEach(med => {
-        let imgSrc = getMedicationImage(med.name, med.type);
+        let imgSrc = getMedicationImage(med.name, med.type, med.image_url);
 
         const card = document.createElement('div');
         card.className = 'medication-card';
@@ -465,12 +477,13 @@ addForm.addEventListener('submit', async (e) => {
     const type = document.getElementById('med-type').value;
     const time = document.getElementById('med-time').value;
     const instruction = document.querySelector('input[name="instruction"]:checked').value;
+    const imageUrl = document.getElementById('med-image-url') ? document.getElementById('med-image-url').value : null;
 
     // إضافة الدواء إلى قاعدة بيانات Supabase
     const { data, error } = await supabaseClient
         .from('medicines')
         .insert([
-            { medicine_name: name, dosage: dose, time: time, type: type, instruction: instruction, user_id: currentUser.id }
+            { medicine_name: name, dosage: dose, time: time, type: type, instruction: instruction, user_id: currentUser.id, image_url: imageUrl }
         ])
         .select();
 
